@@ -61,6 +61,7 @@ fn bindgen(target: &Target) -> bindgen::Builder {
         .clang_arg("-I./third_party/nordic/nrfx/mdk")
         .clang_arg("-I./third_party/nordic/nrfxlib/mpsl/include")
         .clang_arg(format!("-D{}", target.chip))
+        .clang_arg(format!("-D{}", "NRF5340_XXAA_APPLICATION"))
         .allowlist_function("mpsl_.*")
         .allowlist_function("MPSL_.*")
         .allowlist_type("mpsl_.*")

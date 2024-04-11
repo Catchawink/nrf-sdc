@@ -182,6 +182,7 @@ fn bindgen(target: &Target, mem_fns: Rc<RefCell<Vec<u8>>>) -> bindgen::Builder {
         .clang_arg("-I./third_party/nordic/nrfx/mdk")
         .clang_arg("-I./third_party/nordic/nrfxlib/softdevice_controller/include")
         .clang_arg(format!("-D{}", target.chip))
+        .clang_arg(format!("-D{}", "NRF5340_XXAA_APPLICATION"))
         .allowlist_function("sdc_.*")
         .allowlist_function("SDC_.*")
         .allowlist_type("sdc_.*")
