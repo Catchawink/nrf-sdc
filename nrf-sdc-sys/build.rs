@@ -156,6 +156,7 @@ impl Target {
         let (cpu, float_abi, chip) = match target.as_str() {
             "thumbv7em-none-eabihf" => ("cortex-m4", "hard", "NRF52840_XXAA"),
             "thumbv7em-none-eabi" => ("cortex-m4", "soft", "NRF52840_XXAA"),
+            "thumbv8m.main-none-eabihf" => ("cortex-m33", "hard", "NRF5340_XXAA"),
             "thumbv8m.main-none-eabi" => ("cortex-m33", "soft", "NRF5340_XXAA"),
             _ => panic!("Unsupported target: {:?}", target),
         };
