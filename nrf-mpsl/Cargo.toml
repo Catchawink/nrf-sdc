@@ -15,6 +15,7 @@ nrf52820 = ["nrf52820-pac", "embassy-nrf/nrf52820"]
 nrf52832 = ["nrf52832-pac", "embassy-nrf/nrf52832"]
 nrf52833 = ["nrf52833-pac", "embassy-nrf/nrf52833"]
 nrf52840 = ["nrf52840-pac", "embassy-nrf/nrf52840"]
+nrf5340 =  ["nrf5340-app-pac", "embassy-nrf/nrf5340-app-s"]
 critical-section-impl = ["critical-section/restore-state-bool"]
 
 [dependencies]
@@ -32,6 +33,7 @@ nrf52820-pac  = { version = "0.12.0", features = ["rt"], optional = true }
 nrf52832-pac  = { version = "0.12.0", features = ["rt"], optional = true }
 nrf52833-pac  = { version = "0.12.0", features = ["rt"], optional = true }
 nrf52840-pac  = { version = "0.12.0", features = ["rt"], optional = true }
+nrf5340-app-pac = { version = "0.12.0", features = ["rt"], optional = true }
 
 nrf-mpsl-sys = { version = "0.1.0", path = "../nrf-mpsl-sys" }
 

@@ -15,6 +15,7 @@ nrf52820 = ["nrf-mpsl/nrf52820"]
 nrf52832 = ["nrf-mpsl/nrf52832"]
 nrf52833 = ["nrf-mpsl/nrf52833"]
 nrf52840 = ["nrf-mpsl/nrf52840"]
+nrf5340 = ["nrf-mpsl/nrf5340"]
 
 peripheral = ["nrf-sdc-sys/peripheral"]
 central = ["nrf-sdc-sys/central"]

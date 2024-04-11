@@ -8,6 +8,7 @@
     feature = "nrf52832",
     feature = "nrf52833",
     feature = "nrf52840",
+    feature = "nrf5340"
 )))]
 compile_error!("No chip feature activated. You must activate exactly one of the following features: nrf52810, nrf52811, nrf52832, nrf52833, nrf52840");
 
@@ -50,6 +51,8 @@ pub use nrf52832_pac as pac;
 pub use nrf52833_pac as pac;
 #[cfg(feature = "nrf52840")]
 pub use nrf52840_pac as pac;
+#[cfg(feature = "nrf5340")]
+pub use nrf5340_app_pac as pac;
 pub use nrf_mpsl_sys as raw;
 
 // This mod MUST go first, so that the others see its macros.

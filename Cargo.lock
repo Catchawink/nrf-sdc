@@ -676,6 +676,7 @@ dependencies = [
  "nrf52832-pac",
  "nrf52833-pac",
  "nrf52840-pac",
+ "nrf5340-app-pac",
 ]
 
 [[package]]
