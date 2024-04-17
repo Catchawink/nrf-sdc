@@ -9,8 +9,11 @@ use embassy_nrf::peripherals::RNG;
 use embassy_nrf::{interrupt, into_ref, Peripheral, PeripheralRef};
 use embassy_sync::waitqueue::AtomicWaker;
 
-use crate::pac;
-
+#[cfg(feature = "nrf5340")]
+fn regs() -> &'static nrf_mpsl::net_pac::rng_ns::RegisterBlock {
+    unsafe { &*nrf_mpsl::net_pac::RNG_NS::PTR }
+}
+#[cfg(not(feature = "nrf5340"))]
 fn regs() -> &'static pac::rng::RegisterBlock {
     unsafe { &*pac::RNG::PTR }
 }

@@ -4,23 +4,38 @@ use core::marker::PhantomData;
 use core::task::Poll;
 
 use cortex_m::interrupt::InterruptNumber as _;
-use embassy_nrf::interrupt::typelevel::{Binding, Handler, Interrupt, POWER_CLOCK, RADIO, RTC0, TIMER0};
+#[cfg(feature = "nrf5340")]
+type PowerClock = embassy_nrf::interrupt::typelevel::CLOCK_POWER;
+#[cfg(not(feature = "nrf5340"))]
+type PowerClock = embassy_nrf::interrupt::typelevel::POWER_CLOCK;
+use embassy_nrf::interrupt::typelevel::{Binding, Handler, Interrupt, RTC0, TIMER0, RADIO};
 use embassy_nrf::interrupt::Priority;
 use embassy_nrf::{interrupt, peripherals, Peripheral, PeripheralRef};
 use embassy_sync::waitqueue::AtomicWaker;
 
 use crate::error::{Error, RetVal};
-use crate::{hfclk, pac, raw, temp};
+use crate::{hfclk, net_pac, pac, raw, temp};
 
 static WAKER: AtomicWaker = AtomicWaker::new();
 
 pub struct Peripherals<'d> {
+    // Todo: Fix reference (on network core for nrf5340)
+    #[cfg(feature = "nrf5340")]
+    pub clock: pac::CLOCK_NS,
+    #[cfg(not(feature = "nrf5340"))]
     pub clock: pac::CLOCK,
+    // Todo: Fix reference (on network core for nrf5340)
+    #[cfg(feature = "nrf5340")]
+    pub radio: net_pac::RADIO_NS,
+    #[cfg(not(feature = "nrf5340"))]
     pub radio: pac::RADIO,
     pub rtc0: PeripheralRef<'d, peripherals::RTC0>,
     pub timer0: PeripheralRef<'d, peripherals::TIMER0>,
+    // Todo: Fix reference (on network core for nrf5340)
+    #[cfg(feature = "nrf5340")]
+    pub temp: PeripheralRef<'d, net_pac::TEMP_NS>,
+    #[cfg(not(feature = "nrf5340"))]
     pub temp: PeripheralRef<'d, peripherals::TEMP>,
-
     pub ppi_ch19: PeripheralRef<'d, peripherals::PPI_CH19>,
     pub ppi_ch30: PeripheralRef<'d, peripherals::PPI_CH30>,
     pub ppi_ch31: PeripheralRef<'d, peripherals::PPI_CH31>,
@@ -29,10 +44,19 @@ pub struct Peripherals<'d> {
 impl<'d> Peripherals<'d> {
     #[allow(clippy::too_many_arguments)]
     pub fn new(
+        #[cfg(feature = "nrf5340")]
+        clock: pac::CLOCK_NS,
+        #[cfg(not(feature = "nrf5340"))]
         clock: pac::CLOCK,
+        #[cfg(feature = "nrf5340")]
+        radio: net_pac::RADIO_NS,
+        #[cfg(not(feature = "nrf5340"))]
         radio: pac::RADIO,
         rtc0: impl Peripheral<P = peripherals::RTC0> + 'd,
         timer0: impl Peripheral<P = peripherals::TIMER0> + 'd,
+        #[cfg(feature = "nrf5340")]
+        temp: impl Peripheral<P = net_pac::TEMP_NS> + 'd,
+        #[cfg(not(feature = "nrf5340"))]
         temp: impl Peripheral<P = peripherals::TEMP> + 'd,
         ppi_ch19: impl Peripheral<P = peripherals::PPI_CH19> + 'd,
         ppi_ch30: impl Peripheral<P = peripherals::PPI_CH30> + 'd,
@@ -78,7 +102,7 @@ impl<'d> MultiprotocolServiceLayer<'d> {
             + Binding<interrupt::typelevel::RADIO, HighPrioInterruptHandler>
             + Binding<interrupt::typelevel::TIMER0, HighPrioInterruptHandler>
             + Binding<interrupt::typelevel::RTC0, HighPrioInterruptHandler>
-            + Binding<interrupt::typelevel::POWER_CLOCK, ClockInterruptHandler>,
+            + Binding<PowerClock, ClockInterruptHandler>,
     {
         // Peripherals are used by the MPSL library, so we merely take ownership and ignore them
         let _ = p;
@@ -92,7 +116,7 @@ impl<'d> MultiprotocolServiceLayer<'d> {
         RADIO::set_priority(Priority::P0);
         RTC0::set_priority(Priority::P0);
         TIMER0::set_priority(Priority::P0);
-        POWER_CLOCK::set_priority(Priority::P4);
+        PowerClock::set_priority(Priority::P4);
 
         Ok(MultiprotocolServiceLayer { _private: PhantomData })
     }
@@ -130,7 +154,7 @@ impl<T: Interrupt> Handler<T> for LowPrioInterruptHandler {
 }
 
 pub struct ClockInterruptHandler;
-impl Handler<interrupt::typelevel::POWER_CLOCK> for ClockInterruptHandler {
+impl Handler<PowerClock> for ClockInterruptHandler {
     unsafe fn on_interrupt() {
         raw::MPSL_IRQ_CLOCK_Handler();
     }

@@ -27,7 +27,13 @@ static WAKER: AtomicWaker = AtomicWaker::new();
 static RNG_POOL: AtomicPtr<RngPool> = AtomicPtr::new(core::ptr::null_mut());
 
 pub struct Peripherals<'d> {
+    #[cfg(feature = "nrf5340")]
+    pub ecb: nrf_mpsl::net_pac::ECB_NS,
+    #[cfg(not(feature = "nrf5340"))]
     pub ecb: pac::ECB,
+    #[cfg(feature = "nrf5340")]
+    pub aar: nrf_mpsl::net_pac::AAR_NS,
+    #[cfg(not(feature = "nrf5340"))]
     pub aar: pac::AAR,
 
     pub ppi_ch17: PeripheralRef<'d, peripherals::PPI_CH17>,
@@ -47,7 +53,13 @@ pub struct Peripherals<'d> {
 impl<'d> Peripherals<'d> {
     #[allow(clippy::too_many_arguments)]
     pub fn new(
+        #[cfg(feature = "nrf5340")]
+        ecb: nrf_mpsl::net_pac::ECB_NS,
+        #[cfg(not(feature = "nrf5340"))]
         ecb: pac::ECB,
+        #[cfg(feature = "nrf5340")]
+        aar: nrf_mpsl::net_pac::AAR_NS,
+        #[cfg(not(feature = "nrf5340"))]
         aar: pac::AAR,
         ppi_ch17: impl Peripheral<P = peripherals::PPI_CH17> + 'd,
         ppi_ch18: impl Peripheral<P = peripherals::PPI_CH18> + 'd,

@@ -53,6 +53,8 @@ pub use nrf52833_pac as pac;
 pub use nrf52840_pac as pac;
 #[cfg(feature = "nrf5340")]
 pub use nrf5340_app_pac as pac;
+#[cfg(feature = "nrf5340")]
+pub use nrf5340_net_pac as net_pac;
 pub use nrf_mpsl_sys as raw;
 
 // This mod MUST go first, so that the others see its macros.
